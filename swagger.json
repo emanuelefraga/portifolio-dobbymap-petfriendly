@@ -1,0 +1,1077 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DogMap API",
+    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO DogMap é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
+    "version": "1.0.0",
+    "contact": {
+      "name": "DogMap Team",
+      "email": "contato@dogmap.com",
+      "url": "https://dogmap.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3009",
+      "description": "Servidor de Desenvolvimento"
+    },
+    {
+      "url": "https://api.dogmap.com",
+      "description": "Servidor de Produção"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Usuários",
+      "description": "Endpoints para gerenciamento de usuários e seus pets"
+    },
+    {
+      "name": "Locais",
+      "description": "Endpoints para gerenciamento de locais pet-friendly"
+    },
+    {
+      "name": "Avaliações",
+      "description": "Endpoints para gerenciamento de avaliações e comentários"
+    },
+    {
+      "name": "Favoritos",
+      "description": "Endpoints para gerenciamento de favoritos dos usuários"
+    },
+    {
+      "name": "Geral",
+      "description": "Endpoints gerais da API"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Informações da API",
+        "description": "Endpoint raiz que retorna informações básicas sobre a API",
+        "tags": ["Geral"],
+        "responses": {
+          "200": {
+            "description": "Informações da API retornadas com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "🐕 Bem-vindo à DogMap API!"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    },
+                    "documentation": {
+                      "type": "string",
+                      "example": "/api-docs"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Lista todos os usuários",
+        "description": "Retorna uma lista completa de todos os usuários cadastrados no sistema",
+        "tags": ["Usuários"],
+        "responses": {
+          "200": {
+            "description": "Lista de usuários retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Número total de usuários",
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cadastra um novo usuário",
+        "description": "Cria um novo usuário com informações pessoais e dados do pet",
+        "tags": ["Usuários"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "pet"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome completo do usuário",
+                    "example": "João Silva",
+                    "minLength": 2,
+                    "maxLength": 100
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email único do usuário",
+                    "example": "joao.silva@email.com"
+                  },
+                  "pet": {
+                    "$ref": "#/components/schemas/PetInput"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Usuário criado com sucesso"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "summary": "Busca um usuário por ID",
+        "description": "Retorna as informações detalhadas de um usuário específico",
+        "tags": ["Usuários"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID único do usuário",
+            "schema": {
+              "type": "string"
+            },
+            "example": "user_123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/places": {
+      "get": {
+        "summary": "Lista todos os locais",
+        "description": "Retorna uma lista de locais pet-friendly com possibilidade de filtro por tipo",
+        "tags": ["Locais"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Filtrar locais por tipo específico",
+            "schema": {
+              "type": "string",
+              "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"]
+            },
+            "example": "Pet Shop"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de locais retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Place"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Número total de locais",
+                      "example": 10
+                    },
+                    "filters": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "Tipo de filtro aplicado",
+                          "example": "Pet Shop"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cadastra um novo local",
+        "description": "Cria um novo local pet-friendly no sistema",
+        "tags": ["Locais"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "type"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do estabelecimento",
+                    "example": "Pet Shop Amigo Fiel",
+                    "minLength": 2,
+                    "maxLength": 100
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Categoria do local",
+                    "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"],
+                    "example": "Pet Shop"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Local criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Local criado com sucesso"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Place"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/places/{id}": {
+      "get": {
+        "summary": "Busca um local por ID",
+        "description": "Retorna as informações detalhadas de um local específico",
+        "tags": ["Locais"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID único do local",
+            "schema": {
+              "type": "string"
+            },
+            "example": "place_456"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local encontrado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Place"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/places/{id}/reviews": {
+      "get": {
+        "summary": "Lista avaliações de um local",
+        "description": "Retorna todas as avaliações e comentários de um local específico",
+        "tags": ["Avaliações"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do local",
+            "schema": {
+              "type": "string"
+            },
+            "example": "place_456"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de avaliações retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Review"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Número total de avaliações",
+                      "example": 15
+                    },
+                    "place": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria uma nova avaliação",
+        "description": "Permite que um usuário avalie e comente sobre um local",
+        "tags": ["Avaliações"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do local",
+            "schema": {
+              "type": "string"
+            },
+            "example": "place_456"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["userId", "rating", "comment"],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "description": "ID do usuário que está fazendo a avaliação",
+                    "example": "user_123"
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5,
+                    "description": "Nota da avaliação (1-5)",
+                    "example": 5
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Comentário da avaliação",
+                    "example": "Excelente atendimento! Meu cachorro adorou o local.",
+                    "minLength": 10,
+                    "maxLength": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Avaliação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Review"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "place": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/favorites": {
+      "get": {
+        "summary": "Lista favoritos de um usuário",
+        "description": "Retorna todos os locais favoritados por um usuário específico",
+        "tags": ["Favoritos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string"
+            },
+            "example": "user_123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de favoritos retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Favorite"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "description": "Número total de favoritos",
+                      "example": 8
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/favorites/{placeId}": {
+      "post": {
+        "summary": "Adiciona local aos favoritos",
+        "description": "Adiciona um local específico à lista de favoritos do usuário",
+        "tags": ["Favoritos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string"
+            },
+            "example": "user_123"
+          },
+          {
+            "name": "placeId",
+            "in": "path",
+            "required": true,
+            "description": "ID do local",
+            "schema": {
+              "type": "string"
+            },
+            "example": "place_456"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Local adicionado aos favoritos com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Local adicionado aos favoritos com sucesso"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Favorite"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove local dos favoritos",
+        "description": "Remove um local específico da lista de favoritos do usuário",
+        "tags": ["Favoritos"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do usuário",
+            "schema": {
+              "type": "string"
+            },
+            "example": "user_123"
+          },
+          {
+            "name": "placeId",
+            "in": "path",
+            "required": true,
+            "description": "ID do local",
+            "schema": {
+              "type": "string"
+            },
+            "example": "place_456"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Local removido dos favoritos com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Local removido dos favoritos com sucesso"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string"
+                        },
+                        "placeId": {
+                          "type": "string"
+                        },
+                        "place": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pet": {
+        "type": "object",
+        "description": "Informações sobre o pet do usuário",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do pet",
+            "example": "Rex"
+          },
+          "type": {
+            "type": "string",
+            "description": "Tipo do pet",
+            "example": "Cachorro"
+          },
+          "breed": {
+            "type": "string",
+            "description": "Raça do pet",
+            "example": "Golden Retriever"
+          }
+        },
+        "required": ["name", "type", "breed"]
+      },
+      "PetInput": {
+        "type": "object",
+        "description": "Dados para cadastro de um pet",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do pet",
+            "example": "Rex",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "type": {
+            "type": "string",
+            "description": "Tipo do pet",
+            "example": "Cachorro",
+            "enum": ["Cachorro", "Gato", "Pássaro", "Peixe", "Outros"]
+          },
+          "breed": {
+            "type": "string",
+            "description": "Raça do pet",
+            "example": "Golden Retriever",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        },
+        "required": ["name", "type", "breed"]
+      },
+      "User": {
+        "type": "object",
+        "description": "Informações do usuário",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único do usuário",
+            "example": "user_123"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome completo do usuário",
+            "example": "João Silva"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email do usuário",
+            "example": "joao.silva@email.com"
+          },
+          "pet": {
+            "$ref": "#/components/schemas/Pet"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação do usuário",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        },
+        "required": ["id", "name", "email", "pet"]
+      },
+      "Place": {
+        "type": "object",
+        "description": "Informações do local pet-friendly",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único do local",
+            "example": "place_456"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do estabelecimento",
+            "example": "Pet Shop Amigo Fiel"
+          },
+          "type": {
+            "type": "string",
+            "description": "Categoria do local",
+            "example": "Pet Shop",
+            "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação do local",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        },
+        "required": ["id", "name", "type"]
+      },
+      "Review": {
+        "type": "object",
+        "description": "Avaliação de um local por um usuário",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único da avaliação",
+            "example": "review_789"
+          },
+          "userId": {
+            "type": "string",
+            "description": "ID do usuário que fez a avaliação",
+            "example": "user_123"
+          },
+          "placeId": {
+            "type": "string",
+            "description": "ID do local avaliado",
+            "example": "place_456"
+          },
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Nota da avaliação (1-5)",
+            "example": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comentário da avaliação",
+            "example": "Excelente atendimento! Meu cachorro adorou o local."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de criação da avaliação",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        },
+        "required": ["id", "userId", "placeId", "rating", "comment", "createdAt"]
+      },
+      "Favorite": {
+        "type": "object",
+        "description": "Local favoritado por um usuário",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "ID do usuário",
+            "example": "user_123"
+          },
+          "placeId": {
+            "type": "string",
+            "description": "ID do local favoritado",
+            "example": "place_456"
+          },
+          "place": {
+            "$ref": "#/components/schemas/Place"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data de adição aos favoritos",
+            "example": "2024-01-15T10:30:00Z"
+          }
+        },
+        "required": ["userId", "placeId", "place"]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Dados inválidos ou obrigatórios não fornecidos",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Dados obrigatórios não fornecidos"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Nome, email e informações do pet são obrigatórios"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Recurso não encontrado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Usuário não encontrado"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Usuário com ID user_123 não foi encontrado"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MethodNotAllowed": {
+        "description": "Método HTTP não permitido para este endpoint",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Método não permitido"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "O método PUT não é permitido para este endpoint"
+                }
+              }
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Erro interno do servidor",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "error": {
+                  "type": "string",
+                  "example": "Erro interno do servidor"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Ocorreu um erro inesperado"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Token JWT para autenticação (implementação futura)"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ]
+}
