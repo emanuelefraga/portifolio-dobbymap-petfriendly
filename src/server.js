@@ -6,6 +6,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 // Importar rotas
+const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const placesRoutes = require('./routes/places');
 const reviewsRoutes = require('./routes/reviews');
@@ -43,7 +44,21 @@ const swaggerOptions = {
         description: 'Servidor de Desenvolvimento'
       }
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Token de autenticação (use: mock_token_ID_TIMESTAMP)'
+        }
+      }
+    },
     tags: [
+      {
+        name: 'Autenticação',
+        description: 'Endpoints para autenticação de usuários'
+      },
       {
         name: 'Usuários',
         description: 'Endpoints para gerenciamento de usuários'
@@ -70,7 +85,8 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 // Rotas
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// API Routes - Ordem: Usuários → Locais → Avaliações → Favoritos
+// API Routes - Ordem: Autenticação → Usuários → Locais → Avaliações → Favoritos
+app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/places', placesRoutes);
 app.use('/api/places', reviewsRoutes);

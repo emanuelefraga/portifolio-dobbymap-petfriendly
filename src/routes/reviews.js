@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
 const { 
   getReviews, 
   addReview, 
@@ -125,6 +126,8 @@ router.get('/:id/reviews', (req, res) => {
  *   post:
  *     summary: Cria uma nova avaliação para um local
  *     tags: [Avaliações]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -139,21 +142,19 @@ router.get('/:id/reviews', (req, res) => {
  *           schema:
  *             type: object
  *             required:
- *               - userId
  *               - rating
  *               - comment
  *             properties:
- *               userId:
- *                 type: integer
- *                 description: ID do usuário
  *               rating:
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 5
  *                 description: Nota da avaliação (1-5)
+ *                 example: 5
  *               comment:
  *                 type: string
  *                 description: Comentário da avaliação
+ *                 example: "Excelente local para pets!"
  *     responses:
  *       201:
  *         description: Avaliação criada com sucesso
@@ -170,31 +171,20 @@ router.get('/:id/reviews', (req, res) => {
  *                   $ref: '#/components/schemas/Review'
  *       400:
  *         description: Dados obrigatórios não fornecidos ou nota inválida
+ *       401:
+ *         description: Não autorizado - Token de autenticação necessário
  *       404:
- *         description: Usuário ou local não encontrado
+ *         description: Local não encontrado
  *       405:
  *         description: Método não permitido
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: Método não permitido
- *                 message:
- *                   type: string
- *                   example: O método HTTP usado não é suportado por este endpoint
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/:id/reviews', (req, res) => {
+router.post('/:id/reviews', authenticateToken, (req, res) => {
   try {
     const { id } = req.params;
-    const { userId, rating, comment } = req.body;
+    const { rating, comment } = req.body;
+    const userId = req.userId; // Vem do middleware de autenticação
     
     // Verificar se o local existe
     const place = findPlaceById(id);
@@ -203,16 +193,6 @@ router.post('/:id/reviews', (req, res) => {
         success: false,
         error: 'Local não encontrado',
         message: `Local com ID ${id} não foi encontrado`
-      });
-    }
-    
-    // Verificar se o usuário existe
-    const user = findUserById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: 'Usuário não encontrado',
-        message: `Usuário com ID ${userId} não foi encontrado`
       });
     }
     

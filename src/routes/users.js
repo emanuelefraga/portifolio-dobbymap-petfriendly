@@ -31,6 +31,10 @@ const { getUsers, addUser, findUserById } = require('../data/mockData');
  *           type: string
  *           format: email
  *           description: Email do usuário
+ *         password:
+ *           type: string
+ *           pattern: '^[0-9]{6}$'
+ *           description: Senha de 6 dígitos numéricos
  *         pet:
  *           $ref: '#/components/schemas/Pet'
  */
@@ -175,6 +179,7 @@ router.get('/:id', (req, res) => {
  *             required:
  *               - name
  *               - email
+ *               - password
  *               - pet
  *             properties:
  *               name:
@@ -184,6 +189,11 @@ router.get('/:id', (req, res) => {
  *                 type: string
  *                 format: email
  *                 description: Email do usuário
+ *               password:
+ *                 type: string
+ *                 pattern: '^[0-9]{6}$'
+ *                 description: Senha de 6 dígitos numéricos
+ *                 example: "123456"
  *               pet:
  *                 $ref: '#/components/schemas/Pet'
  *     responses:
@@ -216,14 +226,24 @@ router.get('/:id', (req, res) => {
  */
 router.post('/', (req, res) => {
   try {
-    const { name, email, pet } = req.body;
+    const { name, email, password, pet } = req.body;
     
     // Validação dos dados obrigatórios
-    if (!name || !email || !pet) {
+    if (!name || !email || !password || !pet) {
       return res.status(400).json({
         success: false,
         error: 'Dados obrigatórios não fornecidos',
-        message: 'Nome, email e informações do pet são obrigatórios'
+        message: 'Nome, email, senha e informações do pet são obrigatórios'
+      });
+    }
+    
+    // Validação da senha (6 dígitos numéricos)
+    const passwordRegex = /^[0-9]{6}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Senha inválida',
+        message: 'A senha deve conter exatamente 6 dígitos numéricos'
       });
     }
     
@@ -249,6 +269,7 @@ router.post('/', (req, res) => {
     const newUser = addUser({
       name,
       email,
+      password,
       pet
     });
     

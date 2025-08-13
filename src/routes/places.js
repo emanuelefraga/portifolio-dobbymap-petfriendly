@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
 const { getPlaces, addPlace, findPlaceById } = require('../data/mockData');
 
 /**
@@ -188,6 +189,8 @@ router.get('/:id', (req, res) => {
  *   post:
  *     summary: Cadastra um novo local
  *     tags: [Locais]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -201,20 +204,14 @@ router.get('/:id', (req, res) => {
  *               name:
  *                 type: string
  *                 description: Nome do local
+ *                 example: "Pet Shop Amigo Fiel"
  *               type:
  *                 type: string
  *                 description: Tipo do local (Pet Shop, Clínica Veterinária, Parque, etc.)
+ *                 example: "Pet Shop"
  *     responses:
  *       201:
  *         description: Local criado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Place'
- *       400:
- *         description: Dados obrigatórios não fornecidos
- *       405:
- *         description: Método não permitido
  *         content:
  *           application/json:
  *             schema:
@@ -222,19 +219,23 @@ router.get('/:id', (req, res) => {
  *               properties:
  *                 success:
  *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: Método não permitido
  *                 message:
  *                   type: string
- *                   example: O método HTTP usado não é suportado por este endpoint
+ *                 data:
+ *                   $ref: '#/components/schemas/Place'
+ *       400:
+ *         description: Dados obrigatórios não fornecidos ou tipo inválido
+ *       401:
+ *         description: Não autorizado - Token de autenticação necessário
+ *       405:
+ *         description: Método não permitido
  *       500:
  *         description: Erro interno do servidor
  */
-router.post('/', (req, res) => {
+router.post('/', authenticateToken, (req, res) => {
   try {
     const { name, type } = req.body;
+    const userId = req.userId; // Vem do middleware de autenticação
     
     // Validação dos dados obrigatórios
     if (!name || !type) {

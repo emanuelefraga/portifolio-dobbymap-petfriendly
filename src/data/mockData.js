@@ -30,6 +30,7 @@ const initializeMockData = () => {
       id: 1,
       name: 'Manu Fraga',
       email: 'manu.fraga@email.com',
+      password: '123456',
       pet: {
         name: 'Dobby',
         type: 'Cachorro',
@@ -40,6 +41,7 @@ const initializeMockData = () => {
       id: 2,
       name: 'Filipe Andion',
       email: 'filipe.andion@email.com',
+      password: '123456',
       pet: {
         name: 'Simba',
         type: 'Cachorro',
@@ -50,6 +52,7 @@ const initializeMockData = () => {
       id: 3,
       name: 'Harry Potter',
       email: 'harry.potter@email.com',
+      password: '123456',
       pet: {
         name: 'Edwirges',
         type: 'Cachorro',
@@ -60,6 +63,7 @@ const initializeMockData = () => {
       id: 4,
       name: 'Hermione Granger',
       email: 'hermione.granger@email.com',
+      password: '123456',
       pet: {
         name: 'Mia',
         type: 'Gato',
@@ -70,6 +74,7 @@ const initializeMockData = () => {
       id: 5,
       name: 'Ron Weasley',
       email: 'ron.weasley@email.com',
+      password: '123456',
       pet: {
         name: 'Perebas',
         type: 'Gato',
@@ -274,6 +279,11 @@ const getReviews = () => reviews;
 const getFavorites = () => favorites;
 
 const addUser = (user) => {
+  // Validação da senha (6 dígitos numéricos)
+  if (!user.password || !/^[0-9]{6}$/.test(user.password)) {
+    throw new Error('A senha deve conter exatamente 6 dígitos numéricos');
+  }
+  
   const newUser = { ...user, id: generateUserId() };
   users.push(newUser);
   return newUser;
@@ -334,6 +344,22 @@ const checkFavoriteExists = (userId, placeId) => {
   return favorites.some(f => f.userId === parseInt(userId) && f.placeId === parseInt(placeId));
 };
 
+// Função para autenticação de usuários
+const authenticateUser = (email, password) => {
+  const user = users.find(u => u.email === email && u.password === password);
+  if (user) {
+    // Retorna uma cópia do usuário sem a senha por segurança
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+  return null;
+};
+
+// Função para encontrar usuário por email
+const findUserByEmail = (email) => {
+  return users.find(u => u.email === email);
+};
+
 module.exports = {
   initializeMockData,
   getUsers,
@@ -351,5 +377,7 @@ module.exports = {
   getUserFavorites,
   getPlaceReviews,
   checkUserReviewExists,
-  checkFavoriteExists
+  checkFavoriteExists,
+  authenticateUser,
+  findUserByEmail
 };
