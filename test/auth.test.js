@@ -47,4 +47,19 @@ describe('POST /auth/login', () => {
         
     })
 
+    it ('Deve retornar 400 quando dados incompletos', async () => {
+        const bodyAuthLogin = { ...postAuthLogin };
+        bodyAuthLogin.password = ""
+        
+        const resposta = await request(process.env.BASE_URL)
+            .post('/api/auth/login')
+            .set('Content-Type', 'application/json')
+            .send(bodyAuthLogin)
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body.success).to.equal(false);
+        expect(resposta.body.error).to.equal('Dados obrigatórios não fornecidos');
+        expect(resposta.body.message).to.equal('Email e senha são obrigatórios')
+        
+    })
+
 })

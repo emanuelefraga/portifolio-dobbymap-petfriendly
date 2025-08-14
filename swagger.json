@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "DogMap API",
-    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO DogMap é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
+    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO DogMap é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Autenticação**: Sistema de login e registro de usuários\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
     "version": "1.0.0",
     "contact": {
       "name": "DogMap Team",
@@ -25,6 +25,10 @@
     }
   ],
   "tags": [
+    {
+      "name": "Autenticação",
+      "description": "Endpoints para autenticação de usuários (login e registro)"
+    },
     {
       "name": "Usuários",
       "description": "Endpoints para gerenciamento de usuários e seus pets"
@@ -80,6 +84,117 @@
         }
       }
     },
+    "/api/auth/login": {
+      "post": {
+        "summary": "Autenticação de usuário",
+        "description": "Realiza o login do usuário com email e senha, retornando um token JWT",
+        "tags": ["Autenticação"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email do usuário",
+                    "example": "manu.fraga@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "Senha do usuário",
+                    "example": "123456",
+                    "minLength": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login realizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Login realizado com sucesso"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        },
+                        "token": {
+                          "type": "string",
+                          "description": "Token JWT para autenticação",
+                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Dados inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Email e senha são obrigatórios"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Email ou senha incorretos"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+
     "/api/users": {
       "get": {
         "summary": "Lista todos os usuários",
