@@ -8,19 +8,28 @@
     "dev": "nodemon src/server.js",
     "test": "jest"
   },
-  "keywords": ["api", "rest", "pet-friendly", "dogmap"],
+  "keywords": [
+    "api",
+    "rest",
+    "pet-friendly",
+    "dogmap"
+  ],
   "author": "DogMap Team",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^4.18.2",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
+    "chai": "^4.3.6",
+    "jest": "^29.7.0",
+    "mocha": "^11.7.1",
     "nodemon": "^3.0.2",
-    "jest": "^29.7.0"
+    "supertest": "^7.1.3"
   }
 }

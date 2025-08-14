@@ -1,0 +1,14 @@
+{
+    "id": 1,
+    "name": "Manu Fraga",
+    "email": "manu.fraga@email.com",
+    "password": "123456",
+    "pet": {
+        "name": "Dobby",
+        "type": "Cachorro",
+        "breed": "Shitzu"
+    }
+}
+
+
+  
