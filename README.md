@@ -1,4 +1,4 @@
-# 🐕 DogMap API
+# 🧦 Dobby Map API
 
 API REST para sistema de locais pet-friendly, permitindo cadastro e busca de locais, avaliações e favoritos com sistema de autenticação integrado.
 

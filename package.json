@@ -1,7 +1,7 @@
 {
-  "name": "dogmap-api",
+  "name": "dobbymap-api",
   "version": "1.0.0",
-  "description": "API REST para sistema DogMap - locais pet-friendly",
+  "description": "API REST para sistema Dobby Map - locais pet-friendly",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -12,9 +12,9 @@
     "api",
     "rest",
     "pet-friendly",
-    "dogmap"
+    "dobbymap"
   ],
-  "author": "DogMap Team",
+  "author": "Dobby Map Team",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",

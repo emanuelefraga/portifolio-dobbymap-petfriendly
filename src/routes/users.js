@@ -202,7 +202,18 @@ router.get('/:id', (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Usuário criado com sucesso"
+ *                 id:
+ *                   type: integer
+ *                   description: ID do usuário criado
+ *                   example: 7
  *       400:
  *         description: Dados obrigatórios não fornecidos
  *       405:
@@ -276,7 +287,7 @@ router.post('/', (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Usuário criado com sucesso',
-      data: newUser
+      id: newUser.id
     });
   } catch (error) {
     res.status(500).json({
