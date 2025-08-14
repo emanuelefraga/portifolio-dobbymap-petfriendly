@@ -1,0 +1,10 @@
+{
+  "name": "Luna Lovegood",
+  "email": "luna.lovegood@email.com",
+  "password": "123456",
+  "pet": {
+    "name": "Lebre",
+    "type": "Cachorro",
+    "breed": "Poodle"
+  }
+}

@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "DogMap API",
-    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO DogMap é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Autenticação**: Sistema de login e registro de usuários\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
+    "title": "Dobby Map API",
+    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO Dobby Map é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Autenticação**: Sistema de login e registro de usuários\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
     "version": "1.0.0",
     "contact": {
-      "name": "DogMap Team",
-      "email": "contato@dogmap.com",
-      "url": "https://dogmap.com"
+      "name": "Dobby Map Team",
+      "email": "contato@dobbymap.com",
+      "url": "https://dobbymap.com"
     },
     "license": {
       "name": "MIT",
@@ -20,7 +20,7 @@
       "description": "Servidor de Desenvolvimento"
     },
     {
-      "url": "https://api.dogmap.com",
+      "url": "https://api.dobbymap.com",
       "description": "Servidor de Produção"
     }
   ],
@@ -64,10 +64,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "🐕 Bem-vindo à DogMap API!"
-                    },
+                                         "message": {
+                       "type": "string",
+                       "example": "🧦 Bem-vindo à Dobby Map API!"
+                     },
                     "version": {
                       "type": "string",
                       "example": "1.0.0"
@@ -267,29 +267,31 @@
           }
         },
         "responses": {
-          "201": {
-            "description": "Usuário criado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Usuário criado com sucesso"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/User"
-                    }
-                  }
-                }
-              }
-            }
-          },
+                     "201": {
+             "description": "Usuário criado com sucesso",
+             "content": {
+               "application/json": {
+                 "schema": {
+                   "type": "object",
+                   "properties": {
+                     "success": {
+                       "type": "boolean",
+                       "example": true
+                     },
+                     "message": {
+                       "type": "string",
+                       "example": "Usuário criado com sucesso"
+                     },
+                     "id": {
+                       "type": "integer",
+                       "description": "ID do usuário criado",
+                       "example": 7
+                     }
+                   }
+                 }
+               }
+             }
+           },
           "400": {
             "$ref": "#/components/responses/BadRequest"
           },
