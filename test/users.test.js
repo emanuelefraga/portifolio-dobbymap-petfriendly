@@ -89,5 +89,17 @@ describe('GET /users{id}', () => {
         expect(resposta.body.data.pet.breed).to.equal('Shitzu');
     })
 
+    it('Deve retornar 404 quando buscar por um usuário inexistente', async () => {
+        const id = 10;
+        
+        const resposta = await request(process.env.BASE_URL)
+            .get(`/api/users/${id}`)
+            .set('Content-Type', 'application/json')
+        expect(resposta.status).to.equal(404);
+        expect(resposta.body.success).to.equal(false);
+        expect(resposta.body.error).to.equal('Usuário não encontrado');
+        expect(resposta.body.message).to.equal('Usuário com ID 10 não foi encontrado');
+    })
+
 
 })
