@@ -52,6 +52,34 @@ describe('POST /users', () => {
         expect(resposta.body.message).to.equal('Nome, email, senha e informações do pet são obrigatórios');
     })
 
+    it('Deve retornar 400 quando caracteres de senha com mais ou menos que 6 dígitos', async () => {
+        const bodyUsers = { ...postUsers };
+        bodyUsers.password = '1234567'
+        
+        const resposta = await request(process.env.BASE_URL)
+            .post('/api/users')
+            .set('Content-Type', 'application/json')
+            .send(bodyUsers)
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body.success).to.equal(false);
+        expect(resposta.body.error).to.equal('Senha inválida');
+        expect(resposta.body.message).to.equal('A senha deve conter exatamente 6 dígitos numéricos');
+    })
+
+    it('Deve retornar 400 quando senha não numérica', async () => {
+        const bodyUsers = { ...postUsers };
+        bodyUsers.password = 'abcdef'
+        
+        const resposta = await request(process.env.BASE_URL)
+            .post('/api/users')
+            .set('Content-Type', 'application/json')
+            .send(bodyUsers)
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body.success).to.equal(false);
+        expect(resposta.body.error).to.equal('Senha inválida');
+        expect(resposta.body.message).to.equal('A senha deve conter exatamente 6 dígitos numéricos');
+    })
+
     it('Deve retornar 400 quando dados do pet incompletos', async () => {
         const bodyUsers = { ...postUsers };
         bodyUsers.pet.name = ''
