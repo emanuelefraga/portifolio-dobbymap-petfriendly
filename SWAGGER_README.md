@@ -1,4 +1,4 @@
-# 📚 Documentação Swagger - DogMap API
+# 📚 Documentação Swagger - DobbyMap API
 
 ## 🚀 Visão Geral
 
@@ -298,4 +298,4 @@ Para melhorar a documentação:
 
 ---
 
-**🐕 DogMap API** - Conectando pets e seus tutores aos melhores lugares!
+**🐕 DobbyMap API** - Conectando pets e seus tutores aos melhores lugares!

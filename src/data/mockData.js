@@ -1,4 +1,4 @@
-// Dados mockados para a API DogMap
+// Dados mockados para a API DobbMap
 
 let users = [];
 let places = [];
