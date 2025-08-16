@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const path = require('path');
+const swaggerDocument = require(path.join(__dirname, '../swagger.json'));
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
@@ -26,66 +27,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Configuração do Swagger
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'DogMap API',
-      version: '1.0.0',
-      description: 'API REST para sistema de locais pet-friendly',
-      contact: {
-        name: 'DogMap Team',
-        email: 'contato@dogmap.com'
-      }
-    },
-    servers: [
-      {
-        url: `http://localhost:${PORT}`,
-        description: 'Servidor de Desenvolvimento'
-      }
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          description: 'Token de autenticação (use: mock_token_ID_TIMESTAMP)'
-        }
-      }
-    },
-    tags: [
-      {
-        name: 'Autenticação',
-        description: 'Endpoints para autenticação de usuários'
-      },
-      {
-        name: 'Usuários',
-        description: 'Endpoints para gerenciamento de usuários'
-      },
-      {
-        name: 'Locais',
-        description: 'Endpoints para gerenciamento de locais pet-friendly'
-      },
-      {
-        name: 'Avaliações',
-        description: 'Endpoints para gerenciamento de avaliações de locais'
-      },
-      {
-        name: 'Favoritos',
-        description: 'Endpoints para gerenciamento de favoritos dos usuários'
-      }
-    ]
-  },
-  apis: ['./src/routes/*.js']
-};
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Rotas
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// API Routes - Ordem: Autenticação → Usuários → Locais → Avaliações → Favoritos
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/places', placesRoutes);

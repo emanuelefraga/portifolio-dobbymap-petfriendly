@@ -3,87 +3,6 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { getPlaces, addPlace, findPlaceById } = require('../data/mockData');
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Place:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           description: ID único do local
- *         name:
- *           type: string
- *           description: Nome do local
- *         type:
- *           type: string
- *           description: Tipo do local (Pet Shop, Clínica Veterinária, Parque, etc.)
- */
-
-/**
- * @swagger
- * /api/places:
- *   get:
- *     summary: Lista todos os locais pet-friendly
- *     tags: [Locais]
- *     parameters:
- *       - in: query
- *         name: type
- *         schema:
- *           type: string
- *         description: Filtrar por tipo de local
- *         example: Pet Shop
- *       - in: query
- *         name: limit
- *         schema:
- *           type: integer
- *           minimum: 1
- *           maximum: 100
- *         description: Limite de resultados (padrão: 10)
- *         example: 5
- *     responses:
- *       200:
- *         description: Lista de locais retornada com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Place'
- *                 count:
- *                   type: integer
- *                 filters:
- *                   type: object
- *                   properties:
- *                     type:
- *                       type: string
- *                     limit:
- *                       type: integer
- *       405:
- *         description: Método não permitido
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: Método não permitido
- *                 message:
- *                   type: string
- *                   example: O método HTTP usado não é suportado por este endpoint
- *       500:
- *         description: Erro interno do servidor
- */
 router.get('/', (req, res) => {
   try {
     const { type, limit } = req.query;
@@ -116,47 +35,6 @@ router.get('/', (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/places/{id}:
- *   get:
- *     summary: Busca um local por ID
- *     tags: [Locais]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do local
- *     responses:
- *       200:
- *         description: Local encontrado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Place'
- *       404:
- *         description: Local não encontrado
- *       405:
- *         description: Método não permitido
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: Método não permitido
- *                 message:
- *                   type: string
- *                   example: O método HTTP usado não é suportado por este endpoint
- *       500:
- *         description: Erro interno do servidor
- */
 router.get('/:id', (req, res) => {
   try {
     const { id } = req.params;
@@ -183,55 +61,6 @@ router.get('/:id', (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/places:
- *   post:
- *     summary: Cadastra um novo local
- *     tags: [Locais]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - type
- *             properties:
- *               name:
- *                 type: string
- *                 description: Nome do local
- *                 example: "Pet Shop Amigo Fiel"
- *               type:
- *                 type: string
- *                 description: Tipo do local (Pet Shop, Clínica Veterinária, Parque, etc.)
- *                 example: "Pet Shop"
- *     responses:
- *       201:
- *         description: Local criado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                 data:
- *                   $ref: '#/components/schemas/Place'
- *       400:
- *         description: Dados obrigatórios não fornecidos ou tipo inválido
- *       401:
- *         description: Não autorizado - Token de autenticação necessário
- *       405:
- *         description: Método não permitido
- *       500:
- *         description: Erro interno do servidor
- */
 router.post('/', authenticateToken, (req, res) => {
   try {
     const { name, type } = req.body;

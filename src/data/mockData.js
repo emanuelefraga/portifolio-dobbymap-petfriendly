@@ -360,8 +360,32 @@ const findUserByEmail = (email) => {
   return users.find(u => u.email === email);
 };
 
+// Funções para limpeza específica de dados (útil para testes)
+const clearPlaces = () => {
+  places = [];
+  nextPlaceId = 1;
+};
+
+const clearUsers = () => {
+  users = [];
+  nextUserId = 1;
+};
+
+const clearReviews = () => {
+  reviews = [];
+  nextReviewId = 1;
+};
+
+const clearFavorites = () => {
+  favorites = [];
+};
+
 module.exports = {
   initializeMockData,
+  clearPlaces,
+  clearUsers,
+  clearReviews,
+  clearFavorites,
   getUsers,
   getPlaces,
   getReviews,

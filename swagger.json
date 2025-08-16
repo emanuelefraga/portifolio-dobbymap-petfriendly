@@ -1,94 +1,25 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.0.0",
   "info": {
-    "title": "Dobby Map API",
-    "description": "API REST para sistema de locais pet-friendly.\n\n## Sobre o Projeto\nO Dobby Map é uma plataforma que permite aos usuários descobrir, avaliar e favoritar locais que aceitam pets.\n\n## Funcionalidades Principais\n- **Autenticação**: Sistema de login e registro de usuários\n- **Usuários**: Cadastro e gerenciamento de usuários com informações de seus pets\n- **Locais**: Catálogo de estabelecimentos pet-friendly com diferentes categorias\n- **Avaliações**: Sistema de avaliações e comentários para os locais\n- **Favoritos**: Lista personalizada de locais favoritos por usuário\n\n## Tecnologias\n- Node.js + Express\n- Dados mockados para desenvolvimento\n- Swagger para documentação",
+    "title": "DogMap API",
     "version": "1.0.0",
+    "description": "API REST para sistema de locais pet-friendly",
     "contact": {
-      "name": "Dobby Map Team",
-      "email": "contato@dobbymap.com",
-      "url": "https://dobbymap.com"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
+      "name": "DogMap Team",
+      "email": "contato@dogmap.com"
     }
   },
   "servers": [
     {
       "url": "http://localhost:3009",
       "description": "Servidor de Desenvolvimento"
-    },
-    {
-      "url": "https://api.dobbymap.com",
-      "description": "Servidor de Produção"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Autenticação",
-      "description": "Endpoints para autenticação de usuários (login e registro)"
-    },
-    {
-      "name": "Usuários",
-      "description": "Endpoints para gerenciamento de usuários e seus pets"
-    },
-    {
-      "name": "Locais",
-      "description": "Endpoints para gerenciamento de locais pet-friendly"
-    },
-    {
-      "name": "Avaliações",
-      "description": "Endpoints para gerenciamento de avaliações e comentários"
-    },
-    {
-      "name": "Favoritos",
-      "description": "Endpoints para gerenciamento de favoritos dos usuários"
-    },
-    {
-      "name": "Geral",
-      "description": "Endpoints gerais da API"
     }
   ],
   "paths": {
-    "/": {
-      "get": {
-        "summary": "Informações da API",
-        "description": "Endpoint raiz que retorna informações básicas sobre a API",
-        "tags": ["Geral"],
-        "responses": {
-          "200": {
-            "description": "Informações da API retornadas com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                                         "message": {
-                       "type": "string",
-                       "example": "🧦 Bem-vindo à Dobby Map API!"
-                     },
-                    "version": {
-                      "type": "string",
-                      "example": "1.0.0"
-                    },
-                    "documentation": {
-                      "type": "string",
-                      "example": "/api-docs"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/auth/login": {
       "post": {
-        "summary": "Autenticação de usuário",
-        "description": "Realiza o login do usuário com email e senha, retornando um token JWT",
         "tags": ["Autenticação"],
+        "summary": "Autentica um usuário",
         "requestBody": {
           "required": true,
           "content": {
@@ -105,9 +36,9 @@
                   },
                   "password": {
                     "type": "string",
-                    "description": "Senha do usuário",
-                    "example": "123456",
-                    "minLength": 6
+                    "pattern": "^[0-9]{6}$",
+                    "description": "Senha de 6 dígitos numéricos",
+                    "example": "123456"
                   }
                 }
               }
@@ -122,47 +53,24 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Login realizado com sucesso"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "$ref": "#/components/schemas/User"
-                        },
-                        "token": {
-                          "type": "string",
-                          "description": "Token JWT para autenticação",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        }
-                      }
-                    }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "token": { "type": "string" }
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Dados inválidos",
+            "description": "Dados inválidos ou incompletos",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "error": {
-                      "type": "string",
-                      "example": "Email e senha são obrigatórios"
-                    }
+                    "success": { "type": "boolean" },
+                    "error": { "type": "string" },
+                    "message": { "type": "string" }
                   }
                 }
               }
@@ -175,31 +83,24 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "error": {
-                      "type": "string",
-                      "example": "Email ou senha incorretos"
-                    }
+                    "success": { "type": "boolean", "example": false },
+                    "error": { "type": "string", "example": "Credenciais inválidas" },
+                    "message": { "type": "string", "example": "Email ou senha incorretos" }
                   }
                 }
               }
             }
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
-
     "/api/users": {
       "get": {
-        "summary": "Lista todos os usuários",
-        "description": "Retorna uma lista completa de todos os usuários cadastrados no sistema",
         "tags": ["Usuários"],
+        "summary": "Lista todos os usuários",
         "responses": {
           "200": {
             "description": "Lista de usuários retornada com sucesso",
@@ -208,58 +109,52 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
+                    "success": { "type": "boolean" },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/User"
                       }
                     },
-                    "count": {
-                      "type": "integer",
-                      "description": "Número total de usuários",
-                      "example": 5
-                    }
+                    "count": { "type": "integer" }
                   }
                 }
               }
             }
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       },
       "post": {
-        "summary": "Cadastra um novo usuário",
-        "description": "Cria um novo usuário com informações pessoais e dados do pet",
         "tags": ["Usuários"],
+        "summary": "Cadastra um novo usuário",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["name", "email", "pet"],
+                "required": ["name", "email", "password", "pet"],
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "Nome completo do usuário",
-                    "example": "João Silva",
-                    "minLength": 2,
-                    "maxLength": 100
+                    "description": "Nome do usuário"
                   },
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "description": "Email único do usuário",
-                    "example": "joao.silva@email.com"
+                    "description": "Email do usuário"
+                  },
+                  "password": {
+                    "type": "string",
+                    "pattern": "^[0-9]{6}$",
+                    "description": "Senha de 6 dígitos numéricos",
+                    "example": "123456"
                   },
                   "pet": {
-                    "$ref": "#/components/schemas/PetInput"
+                    "$ref": "#/components/schemas/Pet"
                   }
                 }
               }
@@ -267,55 +162,41 @@
           }
         },
         "responses": {
-                     "201": {
-             "description": "Usuário criado com sucesso",
-             "content": {
-               "application/json": {
-                 "schema": {
-                   "type": "object",
-                   "properties": {
-                     "success": {
-                       "type": "boolean",
-                       "example": true
-                     },
-                     "message": {
-                       "type": "string",
-                       "example": "Usuário criado com sucesso"
-                     },
-                     "id": {
-                       "type": "integer",
-                       "description": "ID do usuário criado",
-                       "example": 7
-                     }
-                   }
-                 }
-               }
-             }
-           },
+          "201": {
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Usuário criado com sucesso" },
+                    "id": { "type": "integer", "description": "ID do usuário criado", "example": 7 }
+                  }
+                }
+              }
+            }
+          },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Dados obrigatórios não fornecidos"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/users/{id}": {
       "get": {
-        "summary": "Busca um usuário por ID",
-        "description": "Retorna as informações detalhadas de um usuário específico",
         "tags": ["Usuários"],
+        "summary": "Busca um usuário por ID",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID único do usuário",
-            "schema": {
-              "type": "string"
-            },
-            "example": "user_123"
+            "schema": { "type": "string" },
+            "description": "ID do usuário"
           }
         ],
         "responses": {
@@ -326,42 +207,44 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/User"
-                    }
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/User" }
                   }
                 }
               }
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Usuário não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/places": {
       "get": {
-        "summary": "Lista todos os locais",
-        "description": "Retorna uma lista de locais pet-friendly com possibilidade de filtro por tipo",
         "tags": ["Locais"],
+        "summary": "Lista todos os locais pet-friendly",
         "parameters": [
           {
-            "name": "type",
             "in": "query",
-            "description": "Filtrar locais por tipo específico",
-            "schema": {
-              "type": "string",
-              "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"]
-            },
+            "name": "type",
+            "schema": { "type": "string" },
+            "description": "Filtrar por tipo de local",
             "example": "Pet Shop"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Limite de resultados (padrão: 10)",
+            "example": 5
           }
         ],
         "responses": {
@@ -372,29 +255,19 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
+                    "success": { "type": "boolean" },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Place"
                       }
                     },
-                    "count": {
-                      "type": "integer",
-                      "description": "Número total de locais",
-                      "example": 10
-                    },
+                    "count": { "type": "integer" },
                     "filters": {
                       "type": "object",
                       "properties": {
-                        "type": {
-                          "type": "string",
-                          "description": "Tipo de filtro aplicado",
-                          "example": "Pet Shop"
-                        }
+                        "type": { "type": "string" },
+                        "limit": { "type": "integer" }
                       }
                     }
                   }
@@ -403,14 +276,14 @@
             }
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       },
       "post": {
-        "summary": "Cadastra um novo local",
-        "description": "Cria um novo local pet-friendly no sistema",
         "tags": ["Locais"],
+        "summary": "Cadastra um novo local",
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -421,15 +294,12 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "Nome do estabelecimento",
-                    "example": "Pet Shop Amigo Fiel",
-                    "minLength": 2,
-                    "maxLength": 100
+                    "description": "Nome do local",
+                    "example": "Pet Shop Amigo Fiel"
                   },
                   "type": {
                     "type": "string",
-                    "description": "Categoria do local",
-                    "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"],
+                    "description": "Tipo do local (Pet Shop, Clínica Veterinária, Parque, etc.)",
                     "example": "Pet Shop"
                   }
                 }
@@ -445,46 +315,37 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Local criado com sucesso"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Place"
-                    }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Place" }
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Dados obrigatórios não fornecidos ou tipo inválido"
+          },
+          "401": {
+            "description": "Não autorizado - Token de autenticação necessário"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/places/{id}": {
       "get": {
-        "summary": "Busca um local por ID",
-        "description": "Retorna as informações detalhadas de um local específico",
         "tags": ["Locais"],
+        "summary": "Busca um local por ID",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID único do local",
-            "schema": {
-              "type": "string"
-            },
-            "example": "place_456"
+            "schema": { "type": "string" },
+            "description": "ID do local"
           }
         ],
         "responses": {
@@ -495,42 +356,33 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Place"
-                    }
+                    "success": { "type": "boolean" },
+                    "data": { "$ref": "#/components/schemas/Place" }
                   }
                 }
               }
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Local não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/places/{id}/reviews": {
       "get": {
-        "summary": "Lista avaliações de um local",
-        "description": "Retorna todas as avaliações e comentários de um local específico",
         "tags": ["Avaliações"],
+        "summary": "Lista todas as avaliações de um local",
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID do local",
-            "schema": {
-              "type": "string"
-            },
-            "example": "place_456"
+            "schema": { "type": "string" },
+            "description": "ID do local"
           }
         ],
         "responses": {
@@ -541,62 +393,38 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
+                    "success": { "type": "boolean" },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Review"
                       }
                     },
-                    "count": {
-                      "type": "integer",
-                      "description": "Número total de avaliações",
-                      "example": 15
-                    },
-                    "place": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "type": {
-                          "type": "string"
-                        }
-                      }
-                    }
+                    "count": { "type": "integer" }
                   }
                 }
               }
             }
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Local não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       },
       "post": {
-        "summary": "Cria uma nova avaliação",
-        "description": "Permite que um usuário avalie e comente sobre um local",
         "tags": ["Avaliações"],
+        "summary": "Cria uma nova avaliação para um local",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID do local",
-            "schema": {
-              "type": "string"
-            },
-            "example": "place_456"
+            "schema": { "type": "string" },
+            "description": "ID do local"
           }
         ],
         "requestBody": {
@@ -605,13 +433,8 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["userId", "rating", "comment"],
+                "required": ["rating", "comment"],
                 "properties": {
-                  "userId": {
-                    "type": "string",
-                    "description": "ID do usuário que está fazendo a avaliação",
-                    "example": "user_123"
-                  },
                   "rating": {
                     "type": "integer",
                     "minimum": 1,
@@ -622,9 +445,7 @@
                   "comment": {
                     "type": "string",
                     "description": "Comentário da avaliação",
-                    "example": "Excelente atendimento! Meu cachorro adorou o local.",
-                    "minLength": 10,
-                    "maxLength": 500
+                    "example": "Excelente local para pets!"
                   }
                 }
               }
@@ -637,72 +458,43 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "place": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  ]
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Review" }
+                  }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Dados obrigatórios não fornecidos ou nota inválida"
+          },
+          "401": {
+            "description": "Não autorizado - Token de autenticação necessário"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Local não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/users/{id}/favorites": {
       "get": {
-        "summary": "Lista favoritos de um usuário",
-        "description": "Retorna todos os locais favoritados por um usuário específico",
         "tags": ["Favoritos"],
+        "summary": "Lista todos os favoritos de um usuário",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID do usuário",
-            "schema": {
-              "type": "string"
-            },
-            "example": "user_123"
+            "schema": { "type": "string" },
+            "description": "ID do usuário"
           }
         ],
         "responses": {
@@ -713,188 +505,137 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
+                    "success": { "type": "boolean" },
                     "data": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Favorite"
                       }
                     },
-                    "count": {
-                      "type": "integer",
-                      "description": "Número total de favoritos",
-                      "example": 8
-                    },
-                    "user": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "email": {
-                          "type": "string"
-                        }
-                      }
-                    }
+                    "count": { "type": "integer" }
                   }
                 }
               }
             }
           },
+          "401": {
+            "description": "Não autorizado - Token de autenticação necessário"
+          },
+          "403": {
+            "description": "Acesso negado - Usuário não pode acessar favoritos de outros"
+          },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Usuário não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
     },
     "/api/users/{id}/favorites/{placeId}": {
       "post": {
-        "summary": "Adiciona local aos favoritos",
-        "description": "Adiciona um local específico à lista de favoritos do usuário",
         "tags": ["Favoritos"],
+        "summary": "Adiciona um local aos favoritos de um usuário",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID do usuário",
-            "schema": {
-              "type": "string"
-            },
-            "example": "user_123"
+            "schema": { "type": "string" },
+            "description": "ID do usuário"
           },
           {
-            "name": "placeId",
             "in": "path",
+            "name": "placeId",
             "required": true,
-            "description": "ID do local",
-            "schema": {
-              "type": "string"
-            },
-            "example": "place_456"
+            "schema": { "type": "string" },
+            "description": "ID do local"
           }
         ],
         "responses": {
           "201": {
-            "description": "Local adicionado aos favoritos com sucesso",
+            "description": "Favorito adicionado com sucesso",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Local adicionado aos favoritos com sucesso"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/Favorite"
-                    }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Favorite" }
                   }
                 }
               }
             }
           },
           "400": {
-            "$ref": "#/components/responses/BadRequest"
+            "description": "Local já está nos favoritos"
+          },
+          "401": {
+            "description": "Não autorizado - Token de autenticação necessário"
+          },
+          "403": {
+            "description": "Acesso negado - Usuário não pode modificar favoritos de outros"
           },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Usuário ou local não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       },
       "delete": {
-        "summary": "Remove local dos favoritos",
-        "description": "Remove um local específico da lista de favoritos do usuário",
         "tags": ["Favoritos"],
+        "summary": "Remove um local dos favoritos de um usuário",
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
-            "name": "id",
             "in": "path",
+            "name": "id",
             "required": true,
-            "description": "ID do usuário",
-            "schema": {
-              "type": "string"
-            },
-            "example": "user_123"
+            "schema": { "type": "string" },
+            "description": "ID do usuário"
           },
           {
-            "name": "placeId",
             "in": "path",
+            "name": "placeId",
             "required": true,
-            "description": "ID do local",
-            "schema": {
-              "type": "string"
-            },
-            "example": "place_456"
+            "schema": { "type": "string" },
+            "description": "ID do local"
           }
         ],
         "responses": {
           "200": {
-            "description": "Local removido dos favoritos com sucesso",
+            "description": "Favorito removido com sucesso",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Local removido dos favoritos com sucesso"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "userId": {
-                          "type": "string"
-                        },
-                        "placeId": {
-                          "type": "string"
-                        },
-                        "place": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
+                    "success": { "type": "boolean" },
+                    "message": { "type": "string" }
                   }
                 }
               }
             }
           },
+          "400": {
+            "description": "Local não está nos favoritos"
+          },
+          "401": {
+            "description": "Não autorizado - Token de autenticação necessário"
+          },
+          "403": {
+            "description": "Acesso negado - Usuário não pode modificar favoritos de outros"
+          },
           "404": {
-            "$ref": "#/components/responses/NotFound"
+            "description": "Usuário ou local não encontrado"
           },
           "500": {
-            "$ref": "#/components/responses/InternalServerError"
+            "description": "Erro interno do servidor"
           }
         }
       }
@@ -904,291 +645,142 @@
     "schemas": {
       "Pet": {
         "type": "object",
-        "description": "Informações sobre o pet do usuário",
         "properties": {
           "name": {
             "type": "string",
-            "description": "Nome do pet",
-            "example": "Rex"
+            "description": "Nome do pet"
           },
           "type": {
             "type": "string",
-            "description": "Tipo do pet",
-            "example": "Cachorro"
+            "description": "Tipo do pet (Cachorro, Gato, etc.)"
           },
           "breed": {
             "type": "string",
-            "description": "Raça do pet",
-            "example": "Golden Retriever"
+            "description": "Raça do pet"
           }
-        },
-        "required": ["name", "type", "breed"]
-      },
-      "PetInput": {
-        "type": "object",
-        "description": "Dados para cadastro de um pet",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nome do pet",
-            "example": "Rex",
-            "minLength": 1,
-            "maxLength": 50
-          },
-          "type": {
-            "type": "string",
-            "description": "Tipo do pet",
-            "example": "Cachorro",
-            "enum": ["Cachorro", "Gato", "Pássaro", "Peixe", "Outros"]
-          },
-          "breed": {
-            "type": "string",
-            "description": "Raça do pet",
-            "example": "Golden Retriever",
-            "minLength": 1,
-            "maxLength": 50
-          }
-        },
-        "required": ["name", "type", "breed"]
+        }
       },
       "User": {
         "type": "object",
-        "description": "Informações do usuário",
         "properties": {
           "id": {
-            "type": "string",
-            "description": "ID único do usuário",
-            "example": "user_123"
+            "type": "integer",
+            "description": "ID único do usuário"
           },
           "name": {
             "type": "string",
-            "description": "Nome completo do usuário",
-            "example": "João Silva"
+            "description": "Nome do usuário"
           },
           "email": {
             "type": "string",
             "format": "email",
-            "description": "Email do usuário",
-            "example": "joao.silva@email.com"
+            "description": "Email do usuário"
+          },
+          "password": {
+            "type": "string",
+            "pattern": "^[0-9]{6}$",
+            "description": "Senha de 6 dígitos numéricos"
           },
           "pet": {
             "$ref": "#/components/schemas/Pet"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Data de criação do usuário",
-            "example": "2024-01-15T10:30:00Z"
           }
-        },
-        "required": ["id", "name", "email", "pet"]
+        }
       },
       "Place": {
         "type": "object",
-        "description": "Informações do local pet-friendly",
         "properties": {
           "id": {
-            "type": "string",
-            "description": "ID único do local",
-            "example": "place_456"
+            "type": "integer",
+            "description": "ID único do local"
           },
           "name": {
             "type": "string",
-            "description": "Nome do estabelecimento",
-            "example": "Pet Shop Amigo Fiel"
+            "description": "Nome do local"
           },
           "type": {
             "type": "string",
-            "description": "Categoria do local",
-            "example": "Pet Shop",
-            "enum": ["Pet Shop", "Clínica Veterinária", "Parque", "Shopping", "Praia", "Restaurante", "Hotel"]
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Data de criação do local",
-            "example": "2024-01-15T10:30:00Z"
+            "description": "Tipo do local (Pet Shop, Clínica Veterinária, Parque, etc.)"
           }
-        },
-        "required": ["id", "name", "type"]
+        }
       },
       "Review": {
         "type": "object",
-        "description": "Avaliação de um local por um usuário",
         "properties": {
           "id": {
-            "type": "string",
-            "description": "ID único da avaliação",
-            "example": "review_789"
+            "type": "integer",
+            "description": "ID único da avaliação"
           },
           "userId": {
-            "type": "string",
-            "description": "ID do usuário que fez a avaliação",
-            "example": "user_123"
+            "type": "integer",
+            "description": "ID do usuário que fez a avaliação"
           },
           "placeId": {
-            "type": "string",
-            "description": "ID do local avaliado",
-            "example": "place_456"
+            "type": "integer",
+            "description": "ID do local avaliado"
           },
           "rating": {
             "type": "integer",
             "minimum": 1,
             "maximum": 5,
-            "description": "Nota da avaliação (1-5)",
-            "example": 5
+            "description": "Nota da avaliação (1-5)"
           },
           "comment": {
             "type": "string",
-            "description": "Comentário da avaliação",
-            "example": "Excelente atendimento! Meu cachorro adorou o local."
+            "description": "Comentário da avaliação"
           },
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Data de criação da avaliação",
-            "example": "2024-01-15T10:30:00Z"
+            "description": "Data de criação da avaliação"
           }
-        },
-        "required": ["id", "userId", "placeId", "rating", "comment", "createdAt"]
+        }
       },
       "Favorite": {
         "type": "object",
-        "description": "Local favoritado por um usuário",
         "properties": {
           "userId": {
             "type": "string",
-            "description": "ID do usuário",
-            "example": "user_123"
+            "description": "ID do usuário"
           },
           "placeId": {
             "type": "string",
-            "description": "ID do local favoritado",
-            "example": "place_456"
+            "description": "ID do local favoritado"
           },
           "place": {
             "$ref": "#/components/schemas/Place"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Data de adição aos favoritos",
-            "example": "2024-01-15T10:30:00Z"
-          }
-        },
-        "required": ["userId", "placeId", "place"]
-      }
-    },
-    "responses": {
-      "BadRequest": {
-        "description": "Dados inválidos ou obrigatórios não fornecidos",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "error": {
-                  "type": "string",
-                  "example": "Dados obrigatórios não fornecidos"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Nome, email e informações do pet são obrigatórios"
-                }
-              }
-            }
-          }
-        }
-      },
-      "NotFound": {
-        "description": "Recurso não encontrado",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "error": {
-                  "type": "string",
-                  "example": "Usuário não encontrado"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Usuário com ID user_123 não foi encontrado"
-                }
-              }
-            }
-          }
-        }
-      },
-      "MethodNotAllowed": {
-        "description": "Método HTTP não permitido para este endpoint",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "error": {
-                  "type": "string",
-                  "example": "Método não permitido"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "O método PUT não é permitido para este endpoint"
-                }
-              }
-            }
-          }
-        }
-      },
-      "InternalServerError": {
-        "description": "Erro interno do servidor",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "success": {
-                  "type": "boolean",
-                  "example": false
-                },
-                "error": {
-                  "type": "string",
-                  "example": "Erro interno do servidor"
-                },
-                "message": {
-                  "type": "string",
-                  "example": "Ocorreu um erro inesperado"
-                }
-              }
-            }
           }
         }
       }
     },
     "securitySchemes": {
-      "BearerAuth": {
+      "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Token JWT para autenticação (implementação futura)"
+        "description": "Token de autenticação (use: mock_token_ID_TIMESTAMP)"
       }
     }
   },
-  "security": [
+  "tags": [
     {
-      "BearerAuth": []
+      "name": "Autenticação",
+      "description": "Endpoints para autenticação de usuários"
+    },
+    {
+      "name": "Usuários",
+      "description": "Endpoints para gerenciamento de usuários"
+    },
+    {
+      "name": "Locais",
+      "description": "Endpoints para gerenciamento de locais pet-friendly"
+    },
+    {
+      "name": "Avaliações",
+      "description": "Endpoints para gerenciamento de avaliações de locais"
+    },
+    {
+      "name": "Favoritos",
+      "description": "Endpoints para gerenciamento de favoritos dos usuários"
     }
   ]
 }
