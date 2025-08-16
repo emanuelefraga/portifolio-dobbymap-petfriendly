@@ -97,7 +97,7 @@ const initializeMockData = () => {
     },
     {
       id: 3,
-      name: 'Hogwartes',
+      name: 'Hogwarts',
       type: 'Parque'
     },
     {

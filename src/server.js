@@ -89,7 +89,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/places', placesRoutes);
-app.use('/api/places', reviewsRoutes);
+app.use('/api/places', reviewsRoutes); // Reviews são sub-rotas de places
 app.use('/api/users', favoritesRoutes);
 
 // Rota de teste

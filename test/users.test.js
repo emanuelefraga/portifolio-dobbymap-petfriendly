@@ -4,7 +4,7 @@ require('dotenv').config();
 const postUsers = require('../fixtures/postUsers.json');
 
 describe('GET /users', () => {
-    it('Deve retornar 200 quando retornar as informações de todos os usuários cadastrados no sistema', async () => {
+    it('Deve retornar 200 quando buscar as informações de todos os usuários cadastrados no sistema', async () => {
         
         const resposta = await request(process.env.BASE_URL)
             .get('/api/users')
@@ -118,7 +118,7 @@ describe('GET /users{id}', () => {
     })
 
     it('Deve retornar 404 quando buscar por um usuário inexistente', async () => {
-        const id = 10;
+        const id = 123;
         
         const resposta = await request(process.env.BASE_URL)
             .get(`/api/users/${id}`)
@@ -126,7 +126,7 @@ describe('GET /users{id}', () => {
         expect(resposta.status).to.equal(404);
         expect(resposta.body.success).to.equal(false);
         expect(resposta.body.error).to.equal('Usuário não encontrado');
-        expect(resposta.body.message).to.equal('Usuário com ID 10 não foi encontrado');
+        expect(resposta.body.message).to.equal(`Usuário com ID ${id} não foi encontrado`);
     })
 
 
