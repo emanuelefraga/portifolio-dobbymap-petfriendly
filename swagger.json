@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "DogMap API",
+    "title": "DobbyMap API",
     "version": "1.0.0",
-    "description": "API REST para sistema de locais pet-friendly",
+    "description": "API REST para sistema de busca de locais pet-friendly, permitindo autenticação de usuários, cadastro de locais, avaliações e favoritos.",
     "contact": {
-      "name": "DogMap Team",
-      "email": "contato@dogmap.com"
+      "name": "DobbyMap Team",
+      "email": "contato@dobbymap.com"
     }
   },
   "servers": [
