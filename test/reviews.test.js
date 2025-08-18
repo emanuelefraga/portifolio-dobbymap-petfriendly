@@ -27,7 +27,7 @@ describe('GET /places/{id}/reviews', () => {
     })
 
     it('Deve retornar 404 quando buscar as avaliações de um local não cadastrado no sistema', async () => {
-        const id = 25;
+        const id = 1525;
                 
         const resposta = await request(process.env.BASE_URL)
             .get(`/api/places/${id}/reviews`)

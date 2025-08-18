@@ -38,7 +38,7 @@ describe('GET /places', () => {
         })
 
         it('Deve retornar 404 quando buscar por um local não cadastrado no sistema', async () => {
-            const id = 13;
+            const id = 1155;
                     
             const resposta = await request(process.env.BASE_URL)
                 .get(`/api/places/${id}`)
