@@ -1,6 +1,6 @@
-# 🐕 Exemplos de Uso da DogMap API
+# 🐕 Exemplos de Uso da DobbyMap API
 
-Este arquivo contém exemplos práticos de como usar a API DogMap.
+Este arquivo contém exemplos práticos de como usar a API Dobby Map.
 
 ## 🚀 Como testar a API
 
@@ -12,7 +12,7 @@ curl http://localhost:3009
 **Resposta esperada:**
 ```json
 {
-  "message": "🐕 Bem-vindo à DogMap API!",
+  "message": "🐕 Bem-vindo à DobbyMap API!",
   "version": "1.0.0",
   "documentation": "/api-docs"
 }
