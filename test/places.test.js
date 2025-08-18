@@ -5,7 +5,7 @@ const { obterToken } = require('../helpers/autenticacao');
 const { clearPlaces, initializeMockData } = require('../src/data/mockData');
 const postPlace = require('../fixtures/postPlaces.json');
 
-describe('Places API', () => {
+describe('GET /places', () => {
 
     it('Deve retornar 200 quando buscar as informações de todos os locais cadastrados no sistema', async () => {
                 
