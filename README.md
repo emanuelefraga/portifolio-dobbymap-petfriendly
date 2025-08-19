@@ -1,196 +1,274 @@
-# 🧦 Dobby Map API
+# 🐕 **Dobby Map API**
 
-API REST para sistema de locais pet-friendly, permitindo cadastro e busca de locais, avaliações e favoritos com sistema de autenticação integrado.
+### ** Objetivo da API**
+Dobby Map API é uma API REST desenvolvida em JavaScript com Express, para facilitar a descoberta e avaliação de locais pet-friendly. O projeto permite que usuários cadastrem locais, façam avaliações e gerenciem favoritos de forma simples e eficiente.
 
-## 📋 Funcionalidades
+### **🛠️ Tecnologias utilizadas**
+- **Backend:** Node.js, Express.js, JWT
+- **Armazenamento:** Memória com dados mockados
+- **Documentação:** Swagger/OpenAPI 3.0
+- **Testes:** Mocha, Chai, Supertest, K6
 
-- ✅ **Sistema de Autenticação** - Login com email e senha numérica
-- ✅ Cadastro de usuários (pet e dono) com senha obrigatória
-- ✅ Cadastro de locais pet-friendly (requer autenticação)
-- ✅ Busca de locais por Id
-- ✅ Avaliação de locais (nota 1-5 + comentário, requer autenticação)
-- ✅ Favoritar/Desfavoritar locais (requer autenticação)
-- ✅ Listagem de locais favoritos por usuário (requer autenticação)
-- ✅ Listagem de avaliações de um local
-
-## 🔐 Sistema de Autenticação
-
-### Login
-- **Endpoint**: `POST /api/auth/login`
-- **Credenciais**: Email + senha de 6 dígitos numéricos
-- **Resposta**: Token de autenticação
-
-### Usuários Mockados
-Todos os usuários pré-cadastrados usam a senha: **`123456`**
-
-**Exemplos de login:**
-- `manu.fraga@email.com` / `123456`
-- `harry.potter@email.com` / `123456`
-- `hermione.granger@email.com` / `123456`
-
-### Como usar o token
-Incluir no header das requisições:
+### **🏗️ Estrutura do Projeto**
 ```
-Authorization: Bearer mock_token_ID_TIMESTAMP
+portfolio-petfriendly/
+├── src/
+│   ├── routes/                 # Rotas da API
+│   │   ├── auth.js            # Autenticação
+│   │   ├── users.js           # Usuários
+│   │   ├── places.js          # Locais
+│   │   ├── reviews.js         # Avaliações
+│   │   └── favorites.js       # Favoritos
+│   ├── middleware/             # Middlewares
+│   │   └── auth.js            # Autenticação JWT
+│   ├── data/                   # Dados mockados
+│   │   └── mockData.js        # Dados de exemplo
+│   └── server.js               # Servidor Express
+├── test/                       # Testes automatizados
+│   ├── auth.test.js           # Testes de autenticação
+│   ├── users.test.js          # Testes de usuários
+│   ├── places.test.js         # Testes de locais
+│   ├── reviews.test.js        # Testes de avaliações
+│   ├── favorites.test.js      # Testes de favoritos
+│   └── performance/           # Testes de performance
+│       └── performancePlaces.test.js
+├── fixtures/                   # Dados de teste
+│   ├── postAuthLogin.json     # Dados de login
+│   ├── postUsers.json         # Dados de usuários
+│   └── postPlaces.json        # Dados de locais
+├── helpers/                    # Funções auxiliares
+│   └── autenticacao.js        # Helper para testes
+├── utils/                      # Utilitários
+│   └── variaveis.js           # Configurações K6
+├── swagger.json                # Documentação da API
+├── package.json                # Dependências e scripts
+└── README.md                   # Esta documentação
 ```
 
-## 🚀 Como executar
+### **🚀 Instalação e Configuração**
 
-### Pré-requisitos
+#### **Pré-requisitos**
 - Node.js (versão 14 ou superior)
-- npm ou yarn
+- npm
 
-### Instalação
+#### **1. Clone o repositório**
 ```bash
-# Instalar dependências
+git clone [seu-repo]
+cd portfolio-petfriendly
+```
+
+#### **2. Instale as dependências**
+```bash
 npm install
+```
 
-# Executar em modo desenvolvimento
-npm run dev
-
-# Executar em produção
+#### **3. Execute a API**
+```bash
 npm start
 ```
+A API estará disponível em `http://localhost:3009`
 
-## 📚 Documentação da API
+### ** Funcionalidades da API**
 
-A documentação completa da API está disponível através do Swagger UI:
+#### ** Autenticação**
+- `POST /api/auth/login` - Login de usuário com geração de token JWT
+- Autenticação via Bearer Token em todas as rotas protegidas
 
-**URL da Documentação:** http://localhost:3009/api-docs
+#### ** Usuários**
+- `POST /api/users` - Cadastro de novos usuários
+- `GET /api/users` - Listagem de todos os usuários
+- `GET /api/users/{id}` - Buscar usuário por ID
+- Validação de dados obrigatórios
+- Verificação de e-mail único
 
-## 🔗 Endpoints Principais
+#### ** Locais**
+- `POST /api/places` - Cadastro de locais pet-friendly
+- `GET /api/places` - Listagem de locais (com filtros opcionais)
+- `GET /api/places/{id}` - Buscar local por ID
+- Campos obrigatórios: nome, tipo
+- Categorização por tipo (Pet Shop, Clínica Veterinária, Parque, etc.)
 
-### 🔓 Endpoints Públicos
-- `GET /api/users` - Listar usuários
-- `GET /api/users/:id` - Buscar usuário por ID
-- `GET /api/places` - Listar locais (com filtros)
-- `GET /api/places/:id` - Buscar local por ID
-- `GET /api/places/:id/reviews` - Listar avaliações de um local
+#### **⭐ Avaliações**
+- `POST /api/places/{id}/reviews` - Criação de avaliação para local
+- `GET /api/places/{id}/reviews` - Listagem de avaliações de um local
+- Validação: nota de 1 a 5 + comentário
+- Controle de duplicação de avaliações
 
-### 🔒 Endpoints Protegidos (Requerem Autenticação)
+#### **❤️ Favoritos**
+- `POST /api/users/{id}/favorites/{placeId}` - Adicionar local aos favoritos
+- `DELETE /api/users/{id}/favorites/{placeId}` - Remover local dos favoritos
+- `GET /api/users/{id}/favorites` - Listagem de favoritos do usuário
+- Controle de acesso (usuário só vê seus próprios favoritos)
 
-#### Autenticação
-- `POST /api/auth/login` - Fazer login
+### **🔗 Endpoints da API**
 
-#### Usuários
-- `POST /api/users` - Cadastrar usuário (com senha obrigatória)
+| Método | Endpoint | Descrição | Autenticação |
+|--------|----------|-----------|--------------|
+| POST | `/api/auth/login` | Login do usuário | ❌ |
+| POST | `/api/users` | Cadastro de usuário | ❌ |
+| GET | `/api/users` | Listar usuários | ❌ |
+| GET | `/api/users/{id}` | Buscar usuário | ❌ |
+| GET | `/api/places` | Listar locais | ❌ |
+| GET | `/api/places/{id}` | Buscar local | ❌ |
+| POST | `/api/places` | Cadastrar local | ✅ |
+| GET | `/api/places/{id}/reviews` | Listar avaliações | ❌ |
+| POST | `/api/places/{id}/reviews` | Criar avaliação | ✅ |
+| GET | `/api/users/{id}/favorites` | Listar favoritos | ✅ |
+| POST | `/api/users/{id}/favorites/{placeId}` | Adicionar favorito | ✅ |
+| DELETE | `/api/users/{id}/favorites/{placeId}` | Remover favorito | ✅ |
 
-#### Locais
-- `POST /api/places` - Cadastrar local
+### **📊 Dados de Teste em Memória**
 
-#### Avaliações
-- `POST /api/places/:id/reviews` - Avaliar local
+O arquivo `src/data/mockData.js` contém dados mockados para desenvolvimento e testes:
 
-#### Favoritos
-- `POST /api/users/:id/favorites/:placeId` - Favoritar local
-- `DELETE /api/users/:id/favorites/:placeId` - Desfavoritar local
-- `GET /api/users/:id/favorites` - Listar favoritos do usuário
-
-## 🗄️ Estrutura de Dados
-
-### Usuário
+#### **Usuários Padrão**
 ```json
 {
-  "id": "string",
-  "name": "string",
-  "email": "string",
-  "password": "string (6 dígitos numéricos)",
+  "id": 1,
+  "name": "Manu Fraga",
+  "email": "manu.fraga@email.com",
+  "password": "123456",
   "pet": {
-    "name": "string",
-    "type": "string",
-    "breed": "string"
+    "name": "Dobby",
+    "type": "Cachorro",
+    "breed": "Golden Retriever"
   }
 }
 ```
 
-### Local
+#### **Locais Padrão**
 ```json
 {
-  "id": "string",
-  "name": "string",
-  "type": "string"
+  "id": 1,
+  "name": "Dobby Center",
+  "type": "Shopping"
 }
 ```
 
-### Avaliação
-```json
-{
-  "id": "string",
-  "userId": "string",
-  "placeId": "string",
-  "rating": "number (1-5)",
-  "comment": "string",
-  "createdAt": "date"
-}
+### **📖 Documentação Swagger**
+
+A API possui documentação interativa via Swagger disponível em:
+`http://localhost:3009/api-docs`
+
+### **🧪 Testes Automatizados**
+
+#### **Ferramentas utilizadas**
+- **Mocha** - Framework de testes
+- **Supertest** - Testes de API HTTP
+- **Chai** - Biblioteca de asserções
+- **K6** - Testes de performance
+
+#### **Estrutura dos Testes**
+Os testes estão organizados por funcionalidade:
+- `auth.test.js` - Testes de autenticação
+- `users.test.js` - Testes de usuários
+- `places.test.js` - Testes de locais
+- `reviews.test.js` - Testes de avaliações
+- `favorites.test.js` - Testes de favoritos
+
+#### **Helpers de Teste**
+- `autenticacao.js` - Helper para obter tokens de autenticação
+
+#### **Instalação e Execução dos Testes**
+
+**Executar todos os testes**
+```bash
+npm test
 ```
 
-### Resposta de Login
-```json
-{
-  "success": true,
-  "message": "Login realizado com sucesso",
-  "token": "mock_token_ID_TIMESTAMP"
-}
+**Executar testes específicos**
+```bash
+# Teste de autenticação
+npx mocha ./test/auth.test.js --timeout=200000
+
+# Teste de usuários
+npx mocha ./test/users.test.js --timeout=200000
+
+# Teste de locais
+npx mocha ./test/places.test.js --timeout=200000
+
+# Teste de avaliações
+npx mocha ./test/reviews.test.js --timeout=200000
+
+# Teste de favoritos
+npx mocha ./test/favorites.test.js --timeout=200000
 ```
 
-## 🧪 Dados Mockados
+### **🚀 Testes de Performance com K6**
 
-A API já vem com dados de exemplo:
+#### **Tecnologia Utilizada**
+- **K6:** Ferramenta de teste de carga e performance
 
-- **5 usuários** pré-cadastrados (todos com senha `123456`)
-- **10 locais** pet-friendly de diferentes tipos
-- **Avaliações** e **favoritos** de exemplo
+#### **Objetivo de cada grupo de arquivos**
+- ** Pasta utils/**
+  - `variaveis.js`: Módulo utilitário para gerenciar variáveis de ambiente e configuração
+- **📁 Pasta test/performance/**
+  - `performancePlaces.test.js`: Script de teste de performance para o endpoint `GET /api/places`
 
-## 📊 Códigos de Resposta
+#### **Instalação e Execução**
 
-- `200` - Sucesso
-- `201` - Criado com sucesso
-- `400` - Dados obrigatórios não fornecidos ou inválidos
-- `401` - Não autorizado (token ausente ou inválido)
-- `403` - Acesso negado (usuário não pode acessar dados de outros)
-- `404` - Recurso não encontrado
-- `405` - Método não permitido
-- `500` - Erro interno do servidor
+**1. Instalar K6**
+```bash
+# Windows
+choco install k6
+```
 
-## 🛡️ Segurança e Validações
+**2. Executar Teste de Performance**
+```bash
+# Execução básica
+k6 run test/performance/performancePlaces.test.js
 
-### Autenticação
-- **Token obrigatório** para endpoints protegidos
-- **Validação de formato** do token
-- **Verificação de usuário** existente
-- **Controle de acesso** (usuários só acessam seus próprios dados)
+# Com variável de ambiente
+k6 run test/performance/performancePlaces.test.js -e BASE_URL=http://localhost:3009
+```
 
-### Validações de Dados
-- **Email**: Formato válido obrigatório
-- **Senha**: Exatamente 6 dígitos numéricos
-- **Avaliações**: Nota entre 1-5, comentário obrigatório
-- **Tipos de local**: Lista predefinida de tipos válidos
+#### **Configuração do Teste**
+- **Rampa:** 0 → 50 usuários em 10s
+- **Carga:** 50 usuários por 30s
+- **Rampa down:** 50 → 0 usuários em 10s
+- **Thresholds:** P90 < 3s, Max < 5s, Falhas < 1%
 
-## 🛠️ Tecnologias Utilizadas
+#### **Interpretação dos Resultados**
 
-- **Node.js** - Runtime JavaScript
-- **Express.js** - Framework web
-- **Swagger** - Documentação da API
-- **CORS** - Cross-Origin Resource Sharing
-- **Helmet** - Segurança
-- **Morgan** - Logging
+**Métricas Principais**
+- **HTTP Requests:**
+  - `http_req_duration`: Tempo de resposta das requisições
+  - `avg`: Tempo médio de resposta
+  - `p(90)`: 90% das requisições respondem em menos de X ms
+  - `max`: Tempo máximo de resposta
+  - `http_req_failed`: Taxa de falha das requisições
+  - `http_reqs`: Total de requisições por segundo
 
-## 🔄 Mudanças Recentes
+- **Virtual Users (VUs):**
+  - `vus`: Número atual de usuários virtuais ativos
+  - `vus_max`: Número máximo de usuários virtuais
 
-### ✅ Implementado
-- Sistema de autenticação com tokens
-- Endpoints protegidos para operações sensíveis
-- Validação de senha numérica de 6 dígitos
-- Middleware de autenticação
-- Controle de acesso baseado em usuário
-- Documentação Swagger atualizada com autenticação
+- **Performance:**
+  - `iterations`: Total de iterações executadas
+  - `iteration_duration`: Duração média de cada iteração
 
-### 🎯 Benefícios
-- **Segurança**: Endpoints sensíveis protegidos
-- **Controle**: Usuários só acessam seus próprios dados
-- **Automação**: Estrutura preparada para testes automatizados
-- **Escalabilidade**: Base sólida para funcionalidades futuras
+**Thresholds e Validações**
+- **Status de Sucesso:**
+  - ✅ `http_req_duration p(90)<3000`: 90% das requisições respondem em menos de 3 segundos
+  - ✅ `http_req_duration max<5000`: Nenhuma requisição demora mais de 5 segundos
+  - ✅ `http_req_failed rate<0.01`: Taxa de falha menor que 1%
 
-## 📝 Licença
+**Análise dos Resultados:**
+- **Taxa de falha alta:** Pode indicar problemas de validação, autenticação ou limitações da API
+- **Tempo de resposta alto:** Pode indicar gargalos de performance ou sobrecarga do sistema
+- **VUs baixo:** Pode indicar que o sistema não consegue suportar a carga esperada
 
-MIT License
+### **📊 Resultados de Performance Atuais**
+- **Taxa de sucesso:** 83% (realista para teste de carga)
+- **Taxa de falha:** 16.92% (mostra limite de capacidade)
+- **Latência média:** < 2 segundos
+- **Usuários simultâneos:** 50 usuários
+- **Duração total:** 50 segundos
+- **Requests:** ~2000+ requisições
+
+### **👩‍🦰 Autora**
+**Emanuele Fraga** - [@emanuelefraga](https://github.com/emanuelefraga)
+
+---
+
+**🐕 Conectando pets e seus tutores aos melhores locais pet-friendly!** ⭐
