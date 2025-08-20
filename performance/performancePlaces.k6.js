@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
-import { pegarBaseURL } from '../../utils/variaveis.js';
+import { pegarBaseURL } from '../utils/variaveis.js';
 
 export const options = {
     stages: [

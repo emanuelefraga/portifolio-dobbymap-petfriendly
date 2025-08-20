@@ -75,7 +75,7 @@ describe('POST /users/{id}/favorites/{placeId}', () => {
         const placeId = 8;
 
         const resposta = await request(process.env.BASE_URL)
-            .get(`/api/users/${id}/favorites/${placeId}`)
+            .post(`/api/users/${id}/favorites/${placeId}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${token}`)
         expect(resposta.status).to.equal(403);

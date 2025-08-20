@@ -214,8 +214,8 @@ Os testes geram relatórios HTML automáticos via Mochawesome no diretório `moc
   - `config.local.json`: Arquivo de configuração local contendo a URL base da API para testes
 - **📁 Pasta utils/**
   - `variaveis.js`: Módulo utilitário para gerenciar variáveis de ambiente e configuração
-- **📁 Pasta test/performance/**
-  - `performancePlaces.test.js`: Script de teste de performance para o endpoint GET /api/places
+- **📁 Pasta performance/**
+  - `performancePlaces.k6.js`: Script de teste de performance para o endpoint GET /api/places
 
 ### Instalação e Execução
 
@@ -228,16 +228,16 @@ choco install k6
 #### 2. Executar Teste de Performance
 ```bash
 # Execução básica
-k6 run test/performance/performancePlaces.test.js
+k6 run test/performance/performancePlaces.k6.js
 
 # Certifique-se de passar a variável de ambiente BASE_URL, caso não esteja usando um config.local.json:
-k6 run test/performance/performancePlaces.test.js -e BASE_URL=http://localhost:3009
+k6 run performance/performancePlaces.k6.js -e BASE_URL=http://localhost:3009
 ```
 
 ### Geração de Relatórios
 ```bash
 # Relatório HTML
-K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=html-report.html k6 run test/performance/performancePlaces.test.js
+K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=html-report.html k6 run performance/performancePlaces.k6.js
 ```
 
 ### Interpretação dos Resultados
@@ -272,7 +272,7 @@ K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=html-report.html k6 run test/perfo
 
 ## 🌟 Desenvolvido por:
 
-**Emanuele Fraga** - [@emanuelefraga](https://github.com/emanuelefraga)
+**Emanuele Fraga** - [@Github](https://github.com/emanuelefraga)
 
 ---
 
