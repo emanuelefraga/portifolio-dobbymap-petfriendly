@@ -66,13 +66,16 @@ router.post('/:id/reviews', authenticateToken, (req, res) => {
     }
     
     // Validação da nota (1-5)
-    if (rating < 1 || rating > 5 || !Number.isInteger(rating)) {
+    const ratingNumber = Number(rating);
+
+    if (!Number.isInteger(ratingNumber) || ratingNumber < 1 || ratingNumber > 5) {
       return res.status(400).json({
         success: false,
         error: 'Nota inválida',
         message: 'A nota deve ser um número inteiro entre 1 e 5'
       });
     }
+
     
     // Verificar se o usuário já avaliou este local
     if (checkUserReviewExists(userId, id)) {
@@ -86,7 +89,7 @@ router.post('/:id/reviews', authenticateToken, (req, res) => {
     const newReview = addReview({
       userId,
       placeId: id,
-      rating,
+      rating: ratingNumber,
       comment
     });
     

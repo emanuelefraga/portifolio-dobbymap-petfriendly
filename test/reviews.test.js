@@ -104,4 +104,21 @@ describe('POST /places/{id}/reviews', () => {
              .send(bodyReviews)
          expect(resposta.status).to.equal(401);
      })
+
+     it('Deve retornar 400 quando nota inválida for fornecida', async () => {
+         const placeId = 5;
+         const bodyReviews = { ...postReviews };
+         bodyReviews.rating = 987
+            
+         const resposta = await request(process.env.BASE_URL)
+             .post(`/api/places/${placeId}/reviews`)
+             .set('Content-Type', 'application/json')
+             .set('Authorization', `Bearer ${token}`)
+             .send(bodyReviews)
+         expect(resposta.status).to.equal(400);
+         expect(resposta.body.success).to.equal(false);
+         expect(resposta.body.error).to.equal('Nota inválida');
+         expect(resposta.body.message).to.equal('A nota deve ser um número inteiro entre 1 e 5');
+
+     })
 })

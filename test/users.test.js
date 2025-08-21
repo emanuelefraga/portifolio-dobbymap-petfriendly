@@ -94,6 +94,27 @@ describe('POST /users', () => {
         expect(resposta.body.message).to.equal('Nome, tipo e raça do pet são obrigatórios');
     })
 
+    it("Deve retornar 400 ao tentar cadastrar um usuário já existente no sistema", async () => {
+        const bodyUsers = {
+            name: 'Ron Weasley',
+            email: 'ron.weasley@email.com',
+            password: '123456',
+            pet: {
+            name: 'Perebas',
+            type: 'Gato',
+            breed: 'Persa'
+            }
+        };
+        const resposta = await request(process.env.BASE_URL)
+            .post('/api/users')
+            .set('Content-Type', 'application/json')
+            .send(bodyUsers)
+        expect(resposta.status).to.equal(400);
+        expect(resposta.body.success).to.equal(false);
+        expect(resposta.body.error).to.equal('Usuário já existe');
+        expect(resposta.body.message).to.equal('E-mail já cadastrado no sistema');
+    })
+
 
 })
 
