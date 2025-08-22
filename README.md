@@ -2,7 +2,7 @@
 
 ## 📚 Objetivo da API
 
-Dobby Map API é uma API REST desenvolvida em JavaScript com Express, para facilitar a descoberta e avaliação de locais pet-friendly. O projeto permite que usuários cadastrem locais, favoritem estabelecimentos e gerenciem reviews de forma simples e eficiente.
+A Dobby Map API é uma API RESTful desenvolvida em JavaScript com Express, voltada para facilitar a descoberta, avaliação e recomendação de locais pet-friendly. Ela permite que os usuários realizem cadastro e login, adicionem e listem locais acessíveis para pets, favoritem estabelecimentos que mais gostam, e avaliem e deixem comentários sobre os locais visitados.
 
 ## 🛠️ Tecnologias utilizadas
 
@@ -39,15 +39,17 @@ portfolio-petfriendly/
 ├── fixtures/                           # Dados de teste
 │   ├── postAuthLogin.json              # Fixture para login
 │   ├── postPlaces.json                 # Fixture para cadastro de locais
-│   └── postUsers.json                  # Fixture para cadastro de usuários
+│   ├── postUsers.json                  # Fixture para cadastro de usuários
+│   └── postReviews.json                # Fixture para avaliações
 ├── helpers/                            # Funções auxiliares
 │   └── autenticacao.js                 # Helper para autenticação nos testes
 ├── test/                               # Testes automatizados
 │   ├── auth.test.js                    # Testes de autenticação
 │   ├── users.test.js                   # Testes de usuários
 │   ├── places.test.js                  # Testes de locais
-│   └── performance/                    # Testes de performance
-│       └── performancePlaces.test.js   # Testes de performance para listagem de locais
+│   ├── reviews.test.js                 # Testes de avaliações
+├── performance/                        # Testes de performance
+│   └── performancePlaces.k6.js         # Script de performance para listagem de locais
 ├── mochawesome-report/                 # Relatórios de teste (gerado automaticamente)
 ├── .env                                # Arquivo com variáveis de ambiente (não versionado)
 ├── .gitignore                          # Arquivos ignorados pelo Git
@@ -199,6 +201,12 @@ npx mocha ./test/users.test.js --timeout=200000
 
 # Teste de locais
 npx mocha ./test/places.test.js --timeout=200000
+
+# Teste de favoritos
+npx mocha ./test/favorites.test.js --timeout=200000
+
+# Teste de avaliações
+npx mocha ./test/reviews.test.js --timeout=200000
 ```
 
 ### Relatórios de Teste
@@ -228,7 +236,7 @@ choco install k6
 #### 2. Executar Teste de Performance
 ```bash
 # Execução básica
-k6 run test/performance/performancePlaces.k6.js
+k6 run performance/performancePlaces.k6.js
 
 # Certifique-se de passar a variável de ambiente BASE_URL, caso não esteja usando um config.local.json:
 k6 run performance/performancePlaces.k6.js -e BASE_URL=http://localhost:3009
@@ -272,7 +280,7 @@ K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_EXPORT=html-report.html k6 run performanc
 
 ## 🌟 Desenvolvido por:
 
-**Emanuele Fraga** - [@Github](https://github.com/emanuelefraga)
+**Emanuele Fraga** - [@Github](https://github.com/emanuelefraga) - [@Linkedin](https://www.linkedin.com/in/emanuele-fraga/)
 
 ---
 
